@@ -3,14 +3,13 @@ package jon.basicspring;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.util.Assert;
 
 @SpringBootTest
-class BasicspringApplicationTests {
+public class MyTest {
+
 
     @Test
-    void contextLoads() {
+    public void myTest(){
         Assertions.assertNull(null);
     }
-
 }
