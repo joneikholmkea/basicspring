@@ -11,4 +11,5 @@ public class EndpointController {
     public String home(){
         return "you are home";
     }
+
 }
