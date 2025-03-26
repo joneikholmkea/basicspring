@@ -29,8 +29,7 @@ public class ANDController {
     }
 
     String runInference(double a, double b){
-        String modelPath = "/model2.onnx";
-        //String modelPath = "/xorPrev.onnx";
+        String modelPath = "/AND.onnx";
         try (InputStream is = ANDController.class.getResourceAsStream(modelPath);
              OrtEnvironment env = OrtEnvironment.getEnvironment()) {
             assert is != null;

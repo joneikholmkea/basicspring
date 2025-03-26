@@ -75,22 +75,20 @@ public class BankController {
         return reshapedArray;
     }
 
-
-    String runInference(float[] data2){
-        String modelPath = "/bank2.onnx";
+    String runInference(float[] data2) {
+        String modelPath = "/ANDwithNorm.onnx"; // ONNX model now has built-in normalization
         try (InputStream is = BankController.class.getResourceAsStream(modelPath);
              OrtEnvironment env = OrtEnvironment.getEnvironment()) {
             assert is != null;
             OrtSession session = env.createSession(is.readAllBytes());
-            //float[] data = new float[]{707f, 51f, 10f, 98438f, 1f, 0f, 0f, 70778f, 0f, 1f, 0f, 1f ,0f};  // Your input data
             System.out.println("raw data " + Arrays.toString(data2));
-            float[] means = new float[]{650.53f, 38.92f, 5.01f, 76485.16f, 1.53f, 0.71f, 0.52f, 100088.99f, 0.50f, 0.25f, 0.25f, 0.45f, 0.55f};
-            float[] stds = new float[]{96.65f, 10.49f, 2.89f, 62397.36f, 0.58f, 0.46f, 0.50f, 57510.36f, 0.50f, 0.43f, 0.43f, 0.50f, 0.50f};
-            float[] standardized = standardizeData(data2, means, stds);
-            float[][] reshaped = reshapeTo2D(standardized,13);
-            System.out.println("standardized and reshaped: " + Arrays.toString(reshaped[0]));
+
+            // Directly reshape the raw input data into a 2D array.
+            float[][] reshaped = reshapeTo2D(data2, 13);
+            System.out.println("reshaped data: " + Arrays.toString(reshaped[0]));
+
             OnnxTensor inputTensor = OnnxTensor.createTensor(env, reshaped);
-            OrtSession.Result result = session.run(Collections.singletonMap("dense_4_input", inputTensor));
+            OrtSession.Result result = session.run(Collections.singletonMap("input", inputTensor));
 
             float[][] output = (float[][]) result.get(0).getValue();
             System.out.println(Arrays.toString(output[0]));
@@ -99,5 +97,30 @@ public class BankController {
             throw new RuntimeException(e);
         }
     }
+
+//    String runInference(float[] data2){
+//        String modelPath = "/ANDwithNorm.onnx";
+//        //String modelPath = "/bank2.onnx";
+//        try (InputStream is = BankController.class.getResourceAsStream(modelPath);
+//             OrtEnvironment env = OrtEnvironment.getEnvironment()) {
+//            assert is != null;
+//            OrtSession session = env.createSession(is.readAllBytes());
+//            //float[] data = new float[]{707f, 51f, 10f, 98438f, 1f, 0f, 0f, 70778f, 0f, 1f, 0f, 1f ,0f};  // Your input data
+//            System.out.println("raw data " + Arrays.toString(data2));
+//            float[] means = new float[]{650.53f, 38.92f, 5.01f, 76485.16f, 1.53f, 0.71f, 0.52f, 100088.99f, 0.50f, 0.25f, 0.25f, 0.45f, 0.55f};
+//            float[] stds = new float[]{96.65f, 10.49f, 2.89f, 62397.36f, 0.58f, 0.46f, 0.50f, 57510.36f, 0.50f, 0.43f, 0.43f, 0.50f, 0.50f};
+//            float[] standardized = standardizeData(data2, means, stds);
+//            float[][] reshaped = reshapeTo2D(standardized,13);
+//            System.out.println("standardized and reshaped: " + Arrays.toString(reshaped[0]));
+//            OnnxTensor inputTensor = OnnxTensor.createTensor(env, reshaped);
+//            OrtSession.Result result = session.run(Collections.singletonMap("dense_4_input", inputTensor));
+//
+//            float[][] output = (float[][]) result.get(0).getValue();
+//            System.out.println(Arrays.toString(output[0]));
+//            return Arrays.toString(output[0]);
+//        } catch (Exception e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 
 }
